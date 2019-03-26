@@ -26,6 +26,7 @@ import json
 # local code imports 
 import azure_iot_dps as dps
 import config
+from modbus import ModbusDeviceClient
 
 # global variables
 got_twin = False
@@ -36,6 +37,10 @@ retain_policy = False
 qos_policy = 1
 iot_hub_hostname = ''
 client = None
+
+serialPort = '/dev/ttyAP1'
+baudrate = 9600
+slaveId = 0x00
 
 # compute a device key using the application key and the device identity
 def _computeDrivedSymmetricKey(app_key, deviceId):
@@ -221,11 +226,14 @@ def start():
     client.on_message = on_message
     client.on_publish = on_publish
 
+    # create Modbus client
+    modbusClient = ModbusDeviceClient(method='rtu', port=serialPort, timeout=1, baudrate=baudrate)
+
     # initial connect to Azure IoT Hub
     connect()
 
     # loop forever, user should change to terminate cleanly on a system event
-    while True:
+    while True: 
         # initialize the needed subscriptions and force pull the digital twin
         if connected and startup:
             # initialize twin support
@@ -250,24 +258,15 @@ def start():
 
         # every 5 seconds send a telemetry message
         if connected and (int(time.time()) - last_telemetry_sent >= 5):
-            temp = random.randint(20, 50)
-            payload = '{{"temp":{}}}'.format(temp)
+            temp = modbusClient.getTemperature(slaveId)
+            humidity = modbusClient.getHumidity(slaveId)
+
+            payload = '{{"temp":{0}, "humidity":{1}}}'.format(temp, humidity)
 
             # send the telemetry payload
             send_telemetry(config.DEVICE_NAME, payload)
 
             last_telemetry_sent = time.time()
-
-        # every 15 seconds send a reported property
-        if connected and (int(time.time()) - last_reported_property_sent >= 15):
-            # generate a random die roll for the payload
-            die_number = random.randint(1, 6)
-            payload = '{{"dieNumber": {}}}'.format(die_number)
-
-            # send the reported property
-            send_reported_property(payload)
-            
-            last_reported_property_sent = time.time()
 
         # yield to handle MQTT messaging    
         client.loop()

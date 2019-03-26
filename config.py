@@ -11,17 +11,17 @@
 # a manual config change on the application to enable it, please contact IoT Central team if you wish to use this feature 
 
 # Scope identifier for the application - found in IoT Central in the Administration -> Device Connection page
-SCOPE_ID = '<insert scope identifier here>'
+SCOPE_ID = '0ne0004E04A'
 
 # Application key - found in IoT Central in the Administration -> Device Connection page
-APP_KEY = '<insert application key here>'
+APP_KEY = '9Vd33uKdJLyf2IDk1AW6ckBD5alM9osQeJ8+k2F4AqmzJGITmM3pDy57sfFYuzMTlWQVefBjXiFiTwuS8D3XXA=='
 
 # template model identifier - found in IoT Central in the Device Explorer at the top of the page
-MODEL_ID = ''
+MODEL_ID = '130772c7-97dd-4a76-bbdb-9209888293f6'
 
 # device identity, this can be pre registered in the IoT Central application or will be registered via DPS and 
 # placed in the Unassociated Devices page waiting to be associated with a template
-DEVICE_NAME = '<insert device identifier here>'
+DEVICE_NAME = '04121b4d-7bcc-4c35-8596-23151ee91d97'
 
 # how long should the SAS Token be valid for in seconds, code should be added to renew the token before expiration
 SAS_TOKEN_TTL = 3600 # one hour
