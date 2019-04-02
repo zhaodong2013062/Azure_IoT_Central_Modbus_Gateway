@@ -22,11 +22,12 @@ import binascii
 import ssl
 import random
 import json
+import logging
 
 # local code imports 
 import azure_iot_dps as dps
 import config
-from modbus import ModbusDeviceClient
+from modbus import ModbusDeviceClient, FakeModbusDeviceClient
 
 # global variables
 got_twin = False
@@ -37,6 +38,8 @@ retain_policy = False
 qos_policy = 1
 iot_hub_hostname = ''
 client = None
+logger = None
+slaveClients = []
 
 serialPort = '/dev/ttyAP1'
 baudrate = 9600
@@ -120,6 +123,11 @@ def desired_ack(json_data, status_code, status_text):
             the_value = "true"
         else:
             the_value = "false" 
+
+    if json_data.keys()[key_index] == 'setVoltage':
+        newThermostatValue = json_data['setVoltage']['value']
+        modbusClient.setThermostat(slaveId, newThermostatValue)
+
     reported_payload = '{{"{}":{{"value":{},"statusCode":{},"status":"{}","desiredVersion":{}}}}}'.format(json_data.keys()[key_index], the_value, status_code, status_text, json_data['$version'])
     send_reported_property(reported_payload)
 
@@ -192,11 +200,17 @@ def myCallback(error, hub):
 def start():
     global registration_done
     global client
+    global modbusClient
+    global logger
 
     startup = True
     registration_done = False
     last_telemetry_sent = int(time.time())
     last_reported_property_sent = int(time.time())
+
+    logging.basicConfig()
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
 
     if config.MODEL_ID == '':
         # call without model identifier if not using auto associate or the device is already registered and assigned to a template
@@ -208,7 +222,7 @@ def start():
     while not registration_done:
         time.sleep(0.05)
 
-    print('creating new MQTT instance')
+    logger.info('creating new MQTT instance for master device')
     client = mqtt.Client(client_id=config.DEVICE_NAME, protocol=mqtt.MQTTv311)
 
     # setup Paho for secure MQTT
@@ -227,7 +241,7 @@ def start():
     client.on_publish = on_publish
 
     # create Modbus client
-    modbusClient = ModbusDeviceClient(method='rtu', port=serialPort, timeout=1, baudrate=baudrate)
+    modbusClient = FakeModbusDeviceClient(method='rtu', port=serialPort, timeout=1, baudrate=baudrate)
 
     # initial connect to Azure IoT Hub
     connect()
@@ -258,8 +272,8 @@ def start():
 
         # every 5 seconds send a telemetry message
         if connected and (int(time.time()) - last_telemetry_sent >= 5):
-            temp = modbusClient.getTemperature(slaveId)
-            humidity = modbusClient.getHumidity(slaveId)
+            temp = 40
+            humidity = 40
 
             payload = '{{"temp":{0}, "humidity":{1}}}'.format(temp, humidity)
 

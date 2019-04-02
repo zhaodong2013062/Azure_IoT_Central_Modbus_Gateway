@@ -33,6 +33,8 @@ THERMADDR = 0x00
 INPUTREG = 4
 HOLDINGREG = 3
 
+from random import randint
+
 def updating_writer(a):
     """ A worker process to update the registers holding the temperature and humidity readings
 
@@ -40,8 +42,8 @@ def updating_writer(a):
     """
     log.debug("updating the context")
     context = a[0]
-    temp = context[UNIT].getValues(INPUTREG, TEMPADDR)[0] + 1
-    hum = context[UNIT].getValues(INPUTREG, HUMADDR)[0] + 2
+    temp = context[UNIT].getValues(INPUTREG, TEMPADDR)[0] + randint(-10, 10)
+    hum = context[UNIT].getValues(INPUTREG, HUMADDR)[0] + randint(-10, 10)
     log.debug("Set Temperature to: " + str(temp) + " and Humidity to " + str(hum))
     context[UNIT].setValues(INPUTREG, TEMPADDR, [temp])
     context[UNIT].setValues(INPUTREG, HUMADDR, [hum])
@@ -57,8 +59,8 @@ def run_thermostat_server():
     store = ModbusSlaveContext(
         di=ModbusSequentialDataBlock(0, [0]*100),
         co=ModbusSequentialDataBlock(0, [0]*100),
-        hr=ModbusSequentialDataBlock(0, [0]*100),
-        ir=ModbusSequentialDataBlock(0, [0]*100))
+        hr=ModbusSequentialDataBlock(0, [50]*100),
+        ir=ModbusSequentialDataBlock(0, [50]*100))
     context = ModbusServerContext(slaves=store, single=True)
     
     # ----------------------------------------------------------------------- # 

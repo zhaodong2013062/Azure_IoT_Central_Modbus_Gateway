@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\\\Users\\\\zzh\\\\AppData\\\\Local\\\\Arduino15\\\\packages\\\\AZ3166\\\\tools\\\\**",
+                "C:\\\\Users\\\\zzh\\\\AppData\\\\Local\\\\Arduino15\\\\packages\\\\AZ3166\\\\hardware\\\\stm32f4\\\\1.6.1\\\\**"
+            ],
+            "forcedInclude": [
+                "C:\\\\Users\\\\zzh\\\\AppData\\\\Local\\\\Arduino15\\\\packages\\\\AZ3166\\\\hardware\\\\stm32f4\\\\1.6.1\\\\cores\\\\arduino\\\\Arduino.h"
+            ],
+            "intelliSenseMode": "msvc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

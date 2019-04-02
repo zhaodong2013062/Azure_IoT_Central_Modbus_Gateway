@@ -31,3 +31,87 @@ PATH_TO_ROOT_CERT = 'baltimore.cer'
 
 # validate the cert returned from Azure service
 VALIDATE_CERT =  True
+
+# Modbus baud rate
+BAUD_RATE = 9600
+
+# Modbus serial port for Master
+SERIAL_PORT = 'COM4'
+
+# Slave config file name
+CONFIG_KEY = 'slavesconfig'
+
+# Slave config keys
+CONFIG_KEY_SLAVES = "slaves"
+CONFIG_KEY_SCOPE_ID = 'scopeId'
+CONFIG_KEY_APP_KEY = 'appKey'
+CONFIG_KEY_DEVICE_ID = 'deviceId'
+CONFIG_KEY_DEVICE_NAME = 'deviceName'
+CONFIG_KEY_MODEL_ID = 'modelId'
+CONFIG_KEY_SLAVE_ID = 'slaveId'
+CONFIG_KEY_ACTIVE_REGISTERS = 'activeRegisters'
+
+# Active Registers
+ACTIVE_REGISTERS_KEY_REGISTER_NAME = 'registerName'
+ACTIVE_REGISTERS_KEY_ADDRESS = 'address'
+ACTIVE_REGISTERS_KEY_TYPE = 'type'
+ACTIVE_REGISTERS_TYPE_COIL = 'co'
+ACTIVE_REGISTERS_TYPE_DISCRETE_INPUT = 'di'
+ACTIVE_REGISTERS_TYPE_INPUT_REGISTER = 'ir'
+ACTIVE_REGISTERS_TYPE_HOLDING_REGISTER = 'hr'
+ACTIVE_REGISTERS_BIT_TYPES = [ACTIVE_REGISTERS_TYPE_COIL, ACTIVE_REGISTERS_TYPE_DISCRETE_INPUT]
+ACTIVE_REGISTERS_REGISTER_TYPES = [ACTIVE_REGISTERS_TYPE_INPUT_REGISTER, ACTIVE_REGISTERS_TYPE_HOLDING_REGISTER]
+
+"""
+Config file structure:
+{
+    config:
+    {
+        value:
+        [
+            {
+                deviceName: slave1,
+                deviceId: ???????,
+                appKey: ???????,
+                scopeId: ??????,
+                modelId: ?????,
+                slaveId: 0x00,
+                activeRegisters: 
+                [
+                    {
+                        registerName: tempSensor,
+                        address: 0x00,
+                        type: ir
+                    },
+                    {
+                        registerName: humiditySensor,
+                        address: 0x01,
+                        type: ir
+                    },
+                    {
+                        registerName: thermostat,
+                        address: 0x00
+                        type: hr
+                    }
+                ]
+            },
+            {
+                deviceName: slave2,
+                deviceId: ????????,
+                appKey: ???????,
+                scopeId: ??????,
+                modelId: ?????,
+                slaveId: 0x01,
+                activeRegisters:
+                [
+                    {
+                        registerName: LED,
+                        address: 0x00,
+                        type: co
+                    }
+                ]
+            },
+        ]
+    }
+}
+"""

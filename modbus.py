@@ -3,18 +3,22 @@
 # Licensed under the MIT license.
 
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient
+from random import randint
 
-import logging
-FORMAT = ('%(asctime)-15s %(threadName)-15s '
-          '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
-logging.basicConfig(format=FORMAT)
-log = logging.getLogger()
-log.setLevel(logging.INFO)
+import config
 
-UNIT = 0x00
-TEMPADDR = 0x00
-HUMADDR = 0x01
-THERMADDR = 0x00
+class FakeModbusDeviceClient:
+    def __init__(self, method, port, timeout, baudrate):
+        pass
+    
+    def read_register(self, register_type, slave_id, address):
+        if register_type in config.ACTIVE_REGISTERS_BIT_TYPES:
+            return randint(0, 1)
+        else:
+            return randint(0, 100)
+
+    def write_register(self, register_type, slave_id, address, value):
+        print 'writing {} to slave {} address {}'.format(value, slave_id, address)
 
 class ModbusDeviceClient:
     """ Class to get/set sensor/actuator values to/from slaves of the Modbus gateway
@@ -24,17 +28,27 @@ class ModbusDeviceClient:
             baudrate=baudrate)
         self.client.connect()
 
-    def getTemperature(self, slaveId):
-        return self.__readInputRegister(TEMPADDR, slaveId)
-    
-    def getHumidity(self, slaveId):
-        return self.__readInputRegister(HUMADDR, slaveId)
+    def read_register(self, register_type, slave_id, address):
+        """ Read a register of specified type, slave id, address
+        """
+        if register_type == config.ACTIVE_REGISTERS_TYPE_COIL:
+            result = self.client.read_coils(address, unit=slave_id)
+        elif register_type == config.ACTIVE_REGISTERS_TYPE_DISCRETE_INPUT:
+            result = self.client.read_discrete_inputs(address, unit=slave_id)
+        elif register_type == config.ACTIVE_REGISTERS_TYPE_INPUT_REGISTER:
+            result = self.client.read_input_registers(address, unit=slave_id)
+        elif register_type == config.ACTIVE_REGISTERS_TYPE_HOLDING_REGISTER:
+            result = self.client.read_holding_registers(address, unit=slave_id)
+        else: 
+            raise Exception("Invalid register type {}.", register_type)
 
-    def getThermostat(self, slaveId):
-        return self.__readInputRegister(THERMADDR, slaveId)
-
-    def setThermostat(self, slaveId, thermostatValue):
-        self.__setHoldingRegister(THERMADDR, slaveId, thermostatValue)
+        if result.isError():
+            raise result
+        
+        if register_type in config.ACTIVE_REGISTERS_BIT_TYPES:
+            return result.bits[0]
+        else:
+            return result.registers[0]
 
     def __readInputRegister(self, address, slaveId):
         result = self.client.read_input_registers(address, 1, unit=slaveId)
