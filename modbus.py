@@ -40,7 +40,7 @@ class ModbusDeviceClient:
         elif register_type == config.ACTIVE_REGISTERS_TYPE_HOLDING_REGISTER:
             result = self.client.read_holding_registers(address, unit=slave_id)
         else: 
-            raise Exception("Invalid register type {}.", register_type)
+            raise Exception('Invalid register type {}.', register_type)
 
         if result.isError():
             raise result
@@ -50,14 +50,15 @@ class ModbusDeviceClient:
         else:
             return result.registers[0]
 
-    def __readInputRegister(self, address, slaveId):
-        result = self.client.read_input_registers(address, 1, unit=slaveId)
-        if result.isError():
-            raise result
-        return result.registers[0]
-
-    def __setHoldingRegister(self, address, slaveId, value):
-        result = self.client.write_register(address, value, unit=slaveId)
-        if result.isError():
-            raise result
-        return result
+    def write_register(self, register_type, slave_id, address, value):
+        """ Write a value to a register of specified type, slave id, address
+        """
+        if register_type in config.ACTIVE_REGISTERS_READONLY_TYPES:
+            raise Exception('Invlaid readonly register type: {}', register_type)
+        
+        if register_type == config.ACTIVE_REGISTERS_TYPE_COIL:
+            self.client.write_coil(address, value, unit=slave_id)
+        elif register_type == config.ACTIVE_REGISTERS_TYPE_HOLDING_REGISTER:
+            self.client.write_register(address, value, unit=slave_id)
+        else:
+            raise Exception('Invalid register type {}.', register_type)

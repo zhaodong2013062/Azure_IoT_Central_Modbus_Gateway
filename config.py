@@ -61,6 +61,7 @@ ACTIVE_REGISTERS_TYPE_INPUT_REGISTER = 'ir'
 ACTIVE_REGISTERS_TYPE_HOLDING_REGISTER = 'hr'
 ACTIVE_REGISTERS_BIT_TYPES = [ACTIVE_REGISTERS_TYPE_COIL, ACTIVE_REGISTERS_TYPE_DISCRETE_INPUT]
 ACTIVE_REGISTERS_REGISTER_TYPES = [ACTIVE_REGISTERS_TYPE_INPUT_REGISTER, ACTIVE_REGISTERS_TYPE_HOLDING_REGISTER]
+ACTIVE_REGISTERS_READONLY_TYPES = [ACTIVE_REGISTERS_TYPE_DISCRETE_INPUT, ACTIVE_REGISTERS_TYPE_INPUT_REGISTER]
 
 """
 Config file structure:
@@ -68,16 +69,10 @@ Config file structure:
     config:
     {
         value:
-        [
-            {
-                deviceName: slave1,
-                deviceId: ???????,
-                appKey: ???????,
-                scopeId: ??????,
-                modelId: ?????,
-                slaveId: 0x00,
-                activeRegisters: 
-                [
+        {
+            modelId: ?????, 
+            activeRegisters:
+            [
                     {
                         registerName: tempSensor,
                         address: 0x00,
@@ -93,25 +88,21 @@ Config file structure:
                         address: 0x00
                         type: hr
                     }
-                ]
-            },
-            {
-                deviceName: slave2,
-                deviceId: ????????,
-                appKey: ???????,
-                scopeId: ??????,
-                modelId: ?????,
-                slaveId: 0x01,
-                activeRegisters:
-                [
-                    {
-                        registerName: LED,
-                        address: 0x00,
-                        type: co
-                    }
-                ]
-            },
-        ]
+            ],
+            slaves: 
+            [
+                {
+                    deviceName: slave1,
+                    deviceId: ??????,
+                    slaveId
+                },
+                {
+                    deviceName: slave2,
+                    deviceId: ??????,
+                    slaveId
+                }
+            ]
+        }
     }
 }
 """

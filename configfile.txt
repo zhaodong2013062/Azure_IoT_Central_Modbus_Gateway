@@ -1,57 +1,34 @@
-
+{
+"modelId": "18144sf/1.0.0", 
+"activeRegisters":
+[
+{
+"registerName": "temp",
+"address": 0,
+"type": "ir"
+},
+{
+"registerName": "humidity",
+"address": 1,
+"type": "ir"
+},
+{
+"registerName": "thermostat",
+"address": 0,
+"type": "hr"
+}
+],
+"slaves": 
 [
 {
 "deviceName": "testslave1",
 "deviceId": "23c8951a-25ac-4608-b510-7e7c64d29219",
-"appKey": "9Vd33uKdJLyf2IDk1AW6ckBD5alM9osQeJ8+k2F4AqmzJGITmM3pDy57sfFYuzMTlWQVefBjXiFiTwuS8D3XXA==",
-"scopeId": "0ne0004E04A",
-"modelId": "18144sf",
-"slaveId": 0,
-"activeRegisters": 
-[
-{
-"registerName": "temp",
-"address": 0,
-"type": "ir"
+"slaveId": 0
 },
-{
-"registerName": "humidity",
-"address": 1,
-"type": "ir"
-},
-{
-"registerName": "thermostat",
-"address": 0,
-"type": "hr"
-}
-]
-}
-]
-,
 {
 "deviceName": "testslave2",
 "deviceId": "41140057-7e31-4c37-9cad-bb860c0b4b1d",
-"appKey": "9Vd33uKdJLyf2IDk1AW6ckBD5alM9osQeJ8+k2F4AqmzJGITmM3pDy57sfFYuzMTlWQVefBjXiFiTwuS8D3XXA==",
-"scopeId": "0ne0004E04A",
-"modelId": "18144sf",
-"slaveId": 0,
-"activeRegisters": 
-[
-{
-"registerName": "temp",
-"address": 0,
-"type": "ir"
-},
-{
-"registerName": "humidity",
-"address": 1,
-"type": "ir"
-},
-{
-"registerName": "thermostat",
-"address": 0,
-"type": "hr"
+"slaveId": 1
 }
 ]
 }
-]
