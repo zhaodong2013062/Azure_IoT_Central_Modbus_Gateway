@@ -23,13 +23,13 @@ class MasterDevice(Device):
             slave.stop()
 
     def _get_twin_callback(self, client, userdata, msg):
-        super(MasterDevice, self)._get_twin_callback(client, userdata, msg)
-        twin_json = json.loads(self.twin)
-        if config.DESIRED_TWIN_KEY in twin_json and \
-           config.CONFIG_KEY in twin_json[config.DESIRED_TWIN_KEY] and \
-           config.VALUE_KEY in twin_json[config.DESIRED_TWIN_KEY][config.CONFIG_KEY]:
-            config_json = json.loads(twin_json[config.DESIRED_TWIN_KEY][config.CONFIG_KEY][config.VALUE_KEY])
-            self._init_slaves(config_json)
+        if super(MasterDevice, self)._get_twin_callback(client, userdata, msg) == self.get_twin_rid:
+            twin_json = json.loads(self.twin)
+            if config.DESIRED_TWIN_KEY in twin_json and \
+            config.CONFIG_KEY in twin_json[config.DESIRED_TWIN_KEY] and \
+            config.VALUE_KEY in twin_json[config.DESIRED_TWIN_KEY][config.CONFIG_KEY]:
+                config_json = json.loads(twin_json[config.DESIRED_TWIN_KEY][config.CONFIG_KEY][config.VALUE_KEY])
+                self._init_slaves(config_json)
 
     def _desired_ack(self, json_data, status_code, status_text):
         """ Process the incoming config file for slave devices 

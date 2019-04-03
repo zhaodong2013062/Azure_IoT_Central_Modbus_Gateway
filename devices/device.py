@@ -124,20 +124,20 @@ class Device(object):
 
     # Callbacks
     def _on_connect(self, client, userdata, flags, rc):
-        self.logger.info('Connected rc: %s', rc)
+        self.logger.debug('Connected rc: %s', rc)
         self.connected = True
 
     def _on_disconnect(self, client, userdata, flags, rc):
-        self.logger.info('Disconnected rc: %s', rc)
+        self.logger.debug('Disconnected rc: %s', rc)
         self.connected = False
         
     def _on_message(self, client, userdata, msg):
         if msg.retain == 1:
-            self.logger.info('message retained')
-        self.logger.info(' - '.join((msg.topic, str(msg.payload))))
+            self.logger.debug('message retained')
+        self.logger.debug(' - '.join((msg.topic, str(msg.payload))))
 
     def _on_publish(self, client, userdata, mid):
-        self.logger.info('Published - id:%s', mid)
+        self.logger.debug('Published - id:%s', mid)
     
     def _dps_registration_callback(self, error, hub):
         if error != None:
@@ -155,10 +155,13 @@ class Device(object):
             if msg.topic.find('$rid=20') > -1: # get twin property response
                 self.twin = msg.payload.decode('utf-8')
                 self.logger.info('Twin: \n%s', self.twin)
+                return self.get_twin_rid
             elif msg.topic.find('$rid=10') > -1: # reported property response
                 self.logger.info('reported property accepted')
+                return self.reported_rid
         else:
             self.logger.error('Error: %s - %s', msg.topic, msg.payload)
+            return -1
 
     def _desired_twin_callback(self, client, userdata, msg):
         """  Handler for Azure IoT Digital Twin desired properties (settings in IoT Central terminology)

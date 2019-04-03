@@ -6,7 +6,7 @@ import time
 
 activeregisters = [ { "registerName": "temp", "address": 0, "type": "ir" }, {"registerName": "humidity", "address": 0, "type": "ir"} ]
 
-FORMAT = '%(asctime)s:[%(module)s.%(funcName)s()]: %(message)25s'
+FORMAT = '%(asctime)s:[%(module)s.%(funcName)s()]: %(message)s'
 logger = logging.getLogger()
 logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.DEBUG)
