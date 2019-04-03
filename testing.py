@@ -6,7 +6,7 @@ import time
 
 activeregisters = [ { "registerName": "temp", "address": 0, "type": "ir" }, {"registerName": "humidity", "address": 0, "type": "ir"} ]
 
-FORMAT = '%(asctime)s:[%(module)s.%(funcName)s()]: %(message)22s'
+FORMAT = '%(asctime)s:[%(module)s.%(funcName)s()]: %(message)25s'
 logger = logging.getLogger()
 logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.DEBUG)
@@ -21,7 +21,6 @@ try:
     while True:
         pass
 except (KeyboardInterrupt, SystemExit):
-    print "interrupt"
     master.stop()
     raise
 

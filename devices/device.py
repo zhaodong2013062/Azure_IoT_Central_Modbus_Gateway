@@ -100,8 +100,6 @@ class Device(object):
         # force a twin pull
         self._get_twin()
 
-        time.sleep(3)
-
     def start(self):
         """ Starts the loop thread
         """

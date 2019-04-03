@@ -64,7 +64,7 @@ class SlaveDevice(Device):
         """ Perform actions and send acknowledgement on receipt of a desired property
         """
         # respond with IoT Central confirmation
-        key_index = json_data.keys().index('$version')
+        key_index = json_data.keys().index(config.VERSION_KEY)
         if key_index == 0:
             key_index = 1
         else:
@@ -72,7 +72,7 @@ class SlaveDevice(Device):
 
         key = json_data.keys()[key_index]
 
-        value = json_data[key]['value']
+        value = json_data[key][config.VALUE_KEY]
         if type(value) is bool:
             if value:
                 value = "true"

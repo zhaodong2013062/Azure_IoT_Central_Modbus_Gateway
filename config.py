@@ -38,7 +38,10 @@ BAUD_RATE = 9600
 # Modbus serial port for Master
 SERIAL_PORT = 'COM4'
 
-# Slave config file name
+# Payload key 
+DESIRED_TWIN_KEY = 'desired'
+VERSION_KEY = '$version'
+VALUE_KEY = "value"
 CONFIG_KEY = 'slavesconfig'
 
 # Slave config keys

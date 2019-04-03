@@ -2,6 +2,7 @@
 # Licensed under the MIT license.
 
 import json
+import time
 
 from device import Device
 from slave_device import SlaveDevice
@@ -16,32 +17,37 @@ class MasterDevice(Device):
         super(MasterDevice, self).__init__(scope_id, app_key, device_id, device_name, logger, model_id)
         self.modbus_client = FakeModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
             timeout=1, baudrate=config.BAUD_RATE)
-        # TODO: get current config and create slaves
 
     def kill_slaves(self):
         for slave in self.slaves:
             slave.stop()
 
+    def _get_twin_callback(self, client, userdata, msg):
+        super(MasterDevice, self)._get_twin_callback(client, userdata, msg)
+        twin_json = json.loads(self.twin)
+        if config.DESIRED_TWIN_KEY in twin_json and \
+           config.CONFIG_KEY in twin_json[config.DESIRED_TWIN_KEY] and \
+           config.VALUE_KEY in twin_json[config.DESIRED_TWIN_KEY][config.CONFIG_KEY]:
+            config_json = json.loads(twin_json[config.DESIRED_TWIN_KEY][config.CONFIG_KEY][config.VALUE_KEY])
+            self._init_slaves(config_json)
+
     def _desired_ack(self, json_data, status_code, status_text):
         """ Process the incoming config file for slave devices 
         """
         # respond with IoT Central confirmation
-        key_index = json_data.keys().index('$version')
+        key_index = json_data.keys().index(config.VERSION_KEY)
         if key_index == 0:
             key_index = 1
         else:
             key_index = 0
 
         key = json_data.keys()[key_index]
-        value = json_data[key]['value']
+        value = json_data[key][config.VALUE_KEY]
         if type(value) is bool:
             if value:
                 value = "true"
             else:
                 value = "false"
-
-        if key == "echo":
-            self.logger.info("Recieved echo %s", value)
 
         # Create slave devices if config file is sent
         if key == config.CONFIG_KEY:
@@ -66,6 +72,7 @@ class MasterDevice(Device):
         self.kill_slaves()
         # TODO: validate config for address collisions
         for slave in config_json[config.CONFIG_KEY_SLAVES]:
+            self.logger.info('Initializing slave %s', slave[config.CONFIG_KEY_DEVICE_NAME])
             slave = SlaveDevice(
                 self.scope_id,
                 self.app_key, 
@@ -80,6 +87,7 @@ class MasterDevice(Device):
             slave.start()
 
     def _loop(self):
+        time.sleep(5)
         while self._active:
             self.client.loop()
 
