@@ -33,10 +33,13 @@ PATH_TO_ROOT_CERT = 'baltimore.cer'
 VALIDATE_CERT =  True
 
 # Modbus baud rate
-BAUD_RATE = 9600
+BAUD_RATE = 115200
+
+# Modbus timeout in ms
+MODBUS_CLIENT_TIMEOUT = 1
 
 # Modbus serial port for Master
-SERIAL_PORT = 'COM4'
+SERIAL_PORT = '/dev/ttyAP1'
 
 # Payload key 
 DESIRED_TWIN_KEY = 'desired'

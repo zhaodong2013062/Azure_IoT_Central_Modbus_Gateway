@@ -4,8 +4,10 @@
 import json
 import time
 import threading
+from pymodbus.exceptions import ModbusException
 
-from device import Device
+from modbus import InvalidRegisterTypeException
+from device import Device, ProcessDesiredTwinResponse
 import config
 
 class ActiveRegister:
@@ -39,6 +41,11 @@ class SlaveDevice(Device):
                type == config.ACTIVE_REGISTERS_TYPE_INPUT_REGISTER:
                 self.read_registers.append(name)
 
+    def report_all_registers(self):
+        """ Reports the value of all active registers to IoT Central
+        """
+        self.report_registers(self.active_registers.keys())
+
     def report_all_read_registers(self):
         """ Reports the value of all read registers to IoT Central
         """
@@ -49,9 +56,12 @@ class SlaveDevice(Device):
         """
         payload_components = [""]*len(register_names)
         for index, name in enumerate(register_names):
-            payload_components[index] = self._get_register_payload_component(name)
+            try:
+                payload_components[index] = self._get_register_payload_component(name)
+            except ModbusException as e:
+                self.logger.error('Modbus device read failed with %s', e)
         payload = '{{{0}}}'.format(",".join(payload_components))
-        self._send_telemetry(self.device_id, payload)
+        self.send_telemetry(self.device_id, payload)
 
     def write_register(self, register_name, value):
         """ Writes to a coil or holding register
@@ -60,30 +70,22 @@ class SlaveDevice(Device):
         type = self.active_registers[register_name].type
         self.modbus_client.write_register(type, self.slave_id, address, value)
 
-    def _desired_ack(self, json_data, status_code, status_text):
-        """ Perform actions and send acknowledgement on receipt of a desired property
+    def _process_desired_twin(self, json_data):
+        """ Writes the provided value to the specified register
         """
-        # respond with IoT Central confirmation
-        key_index = json_data.keys().index(config.VERSION_KEY)
-        if key_index == 0:
-            key_index = 1
-        else:
-            key_index = 0
-
-        key = json_data.keys()[key_index]
-
-        value = json_data[key][config.VALUE_KEY]
-        if type(value) is bool:
-            if value:
-                value = "true"
-            else:
-                value = "false" 
-
-        if key in self.active_registers.keys():
-            self.write_register(key, value)
-
-        reported_payload = '{{"{}":{{"value":{},"statusCode":{},"status":"{}","desiredVersion":{}}}}}'.format(json_data.keys()[key_index], value, status_code, status_text, json_data['$version'])
-        self.send_reported_property(reported_payload)
+        try:
+            for key in json_data.keys():
+                if key in self.active_registers:
+                    value = json_data[key]
+                    self.write_register(key, value)
+            return ProcessDesiredTwinResponse()
+        except InvalidRegisterTypeException as e:
+            self.logger.error(e.message)
+            return ProcessDesiredTwinResponse(400, e.message)
+        except Exception as e:
+            status_text = "Error has occured in processing settings: {}.".format(e)
+            self.logger.error(status_text)
+            return ProcessDesiredTwinResponse(500, status_text)
  
     def _get_register_payload_component(self, register_name):
         """ Gets a payload component of the form: "register_name" : <value>
@@ -97,6 +99,6 @@ class SlaveDevice(Device):
         _last_telemetry_sent = time.time()
         while self._active:
             if int(time.time()) - _last_telemetry_sent >= 5:
-                self.report_all_read_registers()
+                self.report_all_registers()
                 _last_telemetry_sent = time.time()
             self.client.loop()

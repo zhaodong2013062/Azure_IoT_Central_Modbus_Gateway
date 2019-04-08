@@ -3,32 +3,29 @@
 "activeRegisters":
 [
 {
-"registerName": "temp",
-"address": 0,
-"type": "ir"
+"registerName": "xangle",
+"address": 61,
+"type": "hr"
 },
 {
-"registerName": "humidity",
-"address": 1,
-"type": "ir"
+"registerName": "yangle",
+"address": 62,
+"type": "hr"
 },
 {
-"registerName": "thermostat",
-"address": 0,
+"registerName": "zangle",
+"address": 63,
 "type": "hr"
 }
 ],
 "slaves": 
 [
 {
-"deviceName": "testslave1",
-"deviceId": "23c8951a-25ac-4608-b510-7e7c64d29219",
-"slaveId": 0
-},
-{
-"deviceName": "testslave2",
-"deviceId": "41140057-7e31-4c37-9cad-bb860c0b4b1d",
-"slaveId": 1
+"deviceName": "accelerometer test",
+"deviceId": "7efa97c1-2b2d-401d-b88b-a4d8e8dcb3bf",
+"slaveId": 80
 }
 ]
 }
+
+{ "modelId": "18144sf/1.0.0",  "activeRegisters": [ { "registerName": "xangle", "address": 0x3d, "type": "hr" }, { "registerName": "yangle", "address": 0x3e, "type": "hr" }, { "registerName": "zangle",  "address": 0x3f, "type": "hr" } ], "slaves":  [ { "deviceName": "accelerometer test", "deviceId": "7efa97c1-2b2d-401d-b88b-a4d8e8dcb3bf", "slaveId": 0x50 } ] }

@@ -12,10 +12,14 @@ import time
 import binascii
 import hashlib
 import threading
+from collections import namedtuple
 
 from modbus import ModbusDeviceClient
 import azure_iot_dps as dps
 import config
+
+ProcessDesiredTwinResponse = namedtuple('ProcessDesiredTwinResponse', 'status_code status_text')
+ProcessDesiredTwinResponse.__new__.__defaults__ = (200, 'completed')
 
 class Device(object):
     registration_done = False
@@ -97,9 +101,6 @@ class Device(object):
         self.client.subscribe('devices/{}/messages/devicebound/#'.format(config.DEVICE_NAME))
         self.client.message_callback_add('devices/{}/messages/devicebound/#'.format(config.DEVICE_NAME), self._c2d_callback)
 
-        # force a twin pull
-        self._get_twin()
-
     def start(self):
         """ Starts the loop thread
         """
@@ -109,6 +110,10 @@ class Device(object):
         thread.start()
         self.device_thread = thread
         self.logger.info('Started loop for device %s', self.device_name)
+        
+        time.sleep(2)
+        # force a twin pull
+        self.get_twin()
 
     def stop(self):
         """ Stops the loop thread
@@ -122,7 +127,24 @@ class Device(object):
             self.client.disconnect()
         self.logger.info('Stopped loop for device %s', self.device_name)
 
-    # Callbacks
+    def get_twin(self):
+        """ Force pull the digital twin for the device
+        """
+        self.client.publish('$iothub/twin/GET/?$rid={}'.format(Device.get_twin_rid), None, qos=Device.qos_policy, retain=Device.retain_policy)
+
+    def send_telemetry(self, device_id, payload):
+        """ Send a telemetry to IoT Central
+        """
+        self.client.publish('devices/{}/messages/events/'.format(device_id), payload, qos=Device.qos_policy, retain=False)
+        self.logger.info('device %s with id %s sent a message: %s', self.device_name, self.device_id, payload)
+
+    def send_reported_property(self, payload):
+        """ Send a reported property to IoT Central
+        """
+        self.client.publish('$iothub/twin/PATCH/properties/reported/?$rid={}'.format(Device.reported_rid), payload, qos=Device.qos_policy, retain=Device.retain_policy)
+        self.logger.info('sent a reported property: %s', payload)
+
+    #region Callback Handlers
     def _on_connect(self, client, userdata, flags, rc):
         self.logger.debug('Connected rc: %s', rc)
         self.connected = True
@@ -147,7 +169,6 @@ class Device(object):
                 self.iot_hub_hostname = hub
         self.registration_done = True
 
-    # Callback Handlers
     def _get_twin_callback(self, client, userdata, msg):
         """ Handler for Azure IoT Digital Twin responses
         """
@@ -169,8 +190,9 @@ class Device(object):
         desired = msg.payload.decode('utf-8')
         self.logger.info('Desired property: \n%s', desired)
         json_data = json.loads(desired)
+        response = self._process_desired_twin(json_data)
         # must acknowledge the receipt of the desired property for IoT Central
-        self._desired_ack(json_data, 200, 'completed')
+        self._desired_ack(json_data, response.status_code, response.status_text)
 
     def _c2d_callback(self, client, userdata, msg):
         """ Handler for Azure IoT Hub Cloud to Device message - not available from IoT Central
@@ -187,24 +209,8 @@ class Device(object):
 
         # acknowledge receipt of the command
         request_id = msg.topic[msg.topic.index('?$rid=')+6:]
-        client.publish('$iothub/methods/res/{}/?$rid={}'.format('200', request_id), '', qos=Device.qos_policy, retain=Device.retain_policy)
-
-    def _get_twin(self):
-        """ Force pull the digital twin for the device
-        """
-        self.client.publish('$iothub/twin/GET/?$rid={}'.format(Device.get_twin_rid), None, qos=Device.qos_policy, retain=Device.retain_policy)
-
-    def _send_telemetry(self, device_id, payload):
-        """ Send a telemetry to IoT Central
-        """
-        self.client.publish('devices/{}/messages/events/'.format(device_id), payload, qos=Device.qos_policy, retain=False)
-        self.logger.info('device %s with id %s sent a message: %s', self.device_name, self.device_id, payload)
-
-    def send_reported_property(self, payload):
-        """ Send a reported property to IoT Central
-        """
-        self.client.publish('$iothub/twin/PATCH/properties/reported/?$rid={}'.format(Device.reported_rid), payload, qos=Device.qos_policy, retain=Device.retain_policy)
-        self.logger.info('sent a reported property: %s', payload)
+        client.publish('$iothub/methods/res/{}/?$rid={}'.format('200', request_id), '', qos=Device.qos_policy, retain=Device.retain_policy)\
+    #endregion
 
     def _gen_sas_token(self, hub_host, device_name, key, token_timeout):
         """ Generate an Azure SAS token for presenting as the password in MQTT _connect
@@ -218,11 +224,42 @@ class Device(object):
             signature = signature[:-1]
         return 'SharedAccessSignature sr={}&sig={}&se={}'.format(uri, signature, self.token_expiry)
 
+    def _desired_ack(self, json_data, status_code, status_text):
+        """ Send acknowledgement on receipt of a desired property
+        """
+        # respond with IoT Central confirmation
+        key_index = json_data.keys().index(config.VERSION_KEY)
+        if key_index == 0:
+            key_index = 1
+        else:
+            key_index = 0
+
+        key = json_data.keys()[key_index]
+
+        value = json_data[key][config.VALUE_KEY]
+        if type(value) is bool:
+            if value:
+                value = "true"
+            else:
+                value = "false"
+
+        # Add single quotes around the json to treat the property as a string
+        if Device._is_json(value):
+            value = "'" + value + "'"
+
+        reported_payload = '{{"{}":{{"value":{},"statusCode":{},"status":"{}","desiredVersion":{}}}}}'.format(json_data.keys()[key_index], value, status_code, status_text, json_data['$version'])
+        self.send_reported_property(reported_payload)
+
+    def _process_desired_twin(self, json_data):
+        """ Process a json object representing the desired twin
+        """
+        return ProcessDesiredTwinResponse(200, 'completed')
+
     def _connect(self):
         """ Connect to the IoT Hub MQTT broker
         """
         # compute the device key
-        device_key = Device._computeDrivedSymmetricKey(self.app_key, self.device_id)
+        device_key = Device.compute_derived_symmetric_key(self.app_key, self.device_id)
 
         # set username and compute the password
         username = '{}/{}/api-version=2016-11-14'.format(self.iot_hub_hostname, self.device_id)
@@ -232,8 +269,13 @@ class Device(object):
         # connect to Azure IoT Hub via MQTT
         self.client.connect(self.iot_hub_hostname, port=8883)
 
+    def _cleanup(self):
+        """ Cleanup on exit
+        """
+        pass
+
     @staticmethod
-    def _computeDrivedSymmetricKey(app_key, deviceId):
+    def compute_derived_symmetric_key(app_key, deviceId):
         """ Compute a device key using the application key and the device identity
         """
         app_key = base64.b64decode(app_key)
@@ -253,16 +295,13 @@ class Device(object):
             i += 1
         return ''.join(strArray)
 
-    def _cleanup(self):
-        """ Cleanup on exit
-        """
-        pass
-
-    @abstractmethod
-    def _desired_ack(self, json_data, status_code, status_text):
-        """ Perform actions and send acknowledgement on receipt of a desired property
-        """
-        pass
+    @staticmethod
+    def _is_json(string):
+        try:
+            json.loads(string)
+        except ValueError:
+            return False
+        return True
 
     @abstractmethod
     def _loop(self):

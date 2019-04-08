@@ -3,9 +3,20 @@
 # Licensed under the MIT license.
 
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient
+from pymodbus.exceptions import ModbusException
 from random import randint
+from retrying import retry
 
 import config
+
+MODBUS_RETRY_WAIT = 100
+MODBUS_RETRY_ATTEMPTS = 10
+
+def _retry_if_modbus_exception(exception):
+    return isinstance(exception, ModbusException)
+
+class InvalidRegisterTypeException(Exception):
+    pass
 
 class FakeModbusDeviceClient:
     def __init__(self, method, port, timeout, baudrate):
@@ -28,9 +39,11 @@ class ModbusDeviceClient:
             baudrate=baudrate)
         self.client.connect()
 
+    @retry(wait_fixed=MODBUS_RETRY_WAIT, retry_on_exception=_retry_if_modbus_exception, stop_max_attempt_number=MODBUS_RETRY_ATTEMPTS)
     def read_register(self, register_type, slave_id, address):
         """ Read a register of specified type, slave id, address
         """
+        print register_type, slave_id, address
         if register_type == config.ACTIVE_REGISTERS_TYPE_COIL:
             result = self.client.read_coils(address, unit=slave_id)
         elif register_type == config.ACTIVE_REGISTERS_TYPE_DISCRETE_INPUT:
@@ -50,6 +63,7 @@ class ModbusDeviceClient:
         else:
             return result.registers[0]
 
+    @retry(wait_fixed=MODBUS_RETRY_WAIT, retry_on_exception=_retry_if_modbus_exception, stop_max_attempt_number=MODBUS_RETRY_ATTEMPTS)
     def write_register(self, register_type, slave_id, address, value):
         """ Write a value to a register of specified type, slave id, address
         """
@@ -61,4 +75,5 @@ class ModbusDeviceClient:
         elif register_type == config.ACTIVE_REGISTERS_TYPE_HOLDING_REGISTER:
             self.client.write_register(address, value, unit=slave_id)
         else:
-            raise Exception('Invalid register type {}.', register_type)
+            raise InvalidRegisterTypeException('Invalid register type {}.', register_type)
+
