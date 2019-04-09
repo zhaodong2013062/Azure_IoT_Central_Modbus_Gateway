@@ -49,14 +49,13 @@ def updating_writer(a):
     log.debug("updating the context")
     context = a[0]
     therm = context[UNIT].getValues(HOLDINGREG, THERMADDR)[0]
-    # temp = context[UNIT].getValues(INPUTREG, TEMPADDR)[0]
-    temp = therm + randint(-5, 5)
+    temp = context[UNIT].getValues(INPUTREG, TEMPADDR)[0]
+    temp = (therm-temp)/2 + temp + randint(-5, 5)
     # hum = 50 + randint(-6, 6)
-    # log.debug("Set Temperature to: " + str(temp) + " and Humidity to " + str(hum))
-    hum = randint(0, 100)
+    hum = 50 + randint(-10, 10)
     context[UNIT].setValues(INPUTREG, TEMPADDR, [temp])
     context[UNIT].setValues(INPUTREG, HUMADDR, [hum])
-    
+    log.debug("Set Temperature to: " + str(temp) + " and Humidity to " + str(hum))
     #thermostat_gui.update(ThermostatGuiMessage(temp, hum, therm))
 
 def run_thermostat_server():

@@ -23,15 +23,6 @@ class MasterDevice(Device):
             slave.stop()
         self.slaves = []
 
-    def _get_twin_callback(self, client, userdata, msg):
-        if super(MasterDevice, self)._get_twin_callback(client, userdata, msg) == self.get_twin_rid:
-            twin_json = json.loads(self.twin)
-            if config.DESIRED_TWIN_KEY in twin_json and \
-            config.CONFIG_KEY in twin_json[config.DESIRED_TWIN_KEY] and \
-            config.VALUE_KEY in twin_json[config.DESIRED_TWIN_KEY][config.CONFIG_KEY]:
-                config_json = json.loads(twin_json[config.DESIRED_TWIN_KEY][config.CONFIG_KEY][config.  VALUE_KEY])
-                self._init_slaves(config_json)
-
     def _process_desired_twin(self, json_data):
         """ Process provided config file
         """

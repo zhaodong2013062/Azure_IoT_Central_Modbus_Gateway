@@ -9,8 +9,8 @@ from retrying import retry
 
 import config
 
-MODBUS_RETRY_WAIT = 100
-MODBUS_RETRY_ATTEMPTS = 10
+MODBUS_RETRY_WAIT = 150
+MODBUS_RETRY_ATTEMPTS = 3
 
 def _retry_if_modbus_exception(exception):
     return isinstance(exception, ModbusException)

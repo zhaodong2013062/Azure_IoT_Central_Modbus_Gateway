@@ -176,6 +176,9 @@ class Device(object):
             if msg.topic.find('$rid=20') > -1: # get twin property response
                 self.twin = msg.payload.decode('utf-8')
                 self.logger.info('Twin: \n%s', self.twin)
+                twin_json = json.loads(self.twin)
+                if config.DESIRED_TWIN_KEY in twin_json:
+                    self._process_desired_twin(twin_json[config.DESIRED_TWIN_KEY])
                 return self.get_twin_rid
             elif msg.topic.find('$rid=10') > -1: # reported property response
                 self.logger.info('reported property accepted')
