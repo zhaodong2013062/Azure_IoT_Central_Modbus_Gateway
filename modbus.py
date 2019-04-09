@@ -43,7 +43,6 @@ class ModbusDeviceClient:
     def read_register(self, register_type, slave_id, address):
         """ Read a register of specified type, slave id, address
         """
-        print register_type, slave_id, address
         if register_type == config.ACTIVE_REGISTERS_TYPE_COIL:
             result = self.client.read_coils(address, unit=slave_id)
         elif register_type == config.ACTIVE_REGISTERS_TYPE_DISCRETE_INPUT:

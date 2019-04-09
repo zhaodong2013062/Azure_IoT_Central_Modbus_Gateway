@@ -48,12 +48,11 @@ def updating_writer(a):
     """
     log.debug("updating the context")
     context = a[0]
-    # therm = context[UNIT].getValues(HOLDINGREG, THERMADDR)[0]
+    therm = context[UNIT].getValues(HOLDINGREG, THERMADDR)[0]
     # temp = context[UNIT].getValues(INPUTREG, TEMPADDR)[0]
-    # temp = (therm - temp)/2 + temp + randint(-2, 2)
+    temp = therm + randint(-5, 5)
     # hum = 50 + randint(-6, 6)
     # log.debug("Set Temperature to: " + str(temp) + " and Humidity to " + str(hum))
-    temp = randint(0, 100)
     hum = randint(0, 100)
     context[UNIT].setValues(INPUTREG, TEMPADDR, [temp])
     context[UNIT].setValues(INPUTREG, HUMADDR, [hum])
