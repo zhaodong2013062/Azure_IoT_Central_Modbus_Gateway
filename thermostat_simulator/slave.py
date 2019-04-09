@@ -45,17 +45,16 @@ def updating_writer(a):
 
     :param arguments: The input arguments to the call
     """
-    for unit in xrange(0, 2):
+    for unit in xrange(0, 1):
         log.debug("updating the context for unit %s", unit)
         context = a[0]
         therm = context[unit].getValues(HOLDINGREG, THERMADDR)[0]
         temp = context[unit].getValues(INPUTREG, TEMPADDR)[0]
-        temp = (therm-temp)/2 + temp + randint(-5, 5)
+        temp = (therm-temp)/5 + temp + randint(-5, 5)
         hum = 50 + randint(-10, 10)
         context[unit].setValues(INPUTREG, TEMPADDR, [temp])
         context[unit].setValues(INPUTREG, HUMADDR, [hum])
-        log.info("Set Temperature to: " + str(temp) + " and Humidity to " + str(hum))
-        log.info("Thermostat value is: " + str(therm))
+        log.info("Slave %s: temp: %s, hum %s, therm %s", unit, temp, hum, therm)
 
 def run_thermostat_server():
     # ----------------------------------------------------------------------- # 

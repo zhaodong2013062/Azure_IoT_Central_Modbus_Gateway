@@ -21,7 +21,7 @@ MODEL_ID = '130772c7-97dd-4a76-bbdb-9209888293f6'
 
 # device identity, this can be pre registered in the IoT Central application or will be registered via DPS and 
 # placed in the Unassociated Devices page waiting to be associated with a template
-DEVICE_NAME = '04121b4d-7bcc-4c35-8596-23151ee91d97'
+DEVICE_NAME = 'f0323747-8e27-46d4-bb7a-c92d059c480b'
 
 # how long should the SAS Token be valid for in seconds, code should be added to renew the token before expiration
 SAS_TOKEN_TTL = 3600 # one hour
