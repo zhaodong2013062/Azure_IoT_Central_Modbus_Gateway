@@ -297,6 +297,8 @@ class Device(object):
 
     @staticmethod
     def _is_json(string):
+        if not isinstance(string, str):
+            return False
         try:
             json.loads(string)
         except ValueError:
