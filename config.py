@@ -33,7 +33,7 @@ PATH_TO_ROOT_CERT = 'baltimore.cer'
 VALIDATE_CERT =  True
 
 # Modbus baud rate
-BAUD_RATE = 115200
+BAUD_RATE = 9600
 
 # Modbus timeout in ms
 MODBUS_CLIENT_TIMEOUT = 1
