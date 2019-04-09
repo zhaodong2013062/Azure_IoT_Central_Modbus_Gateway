@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+from random import randint
+
+from thermostat_gui import ThermostatGui, ThermostatGuiMessage
+
 # --------------------------------------------------------------------------- #
 # import the modbus libraries we need
 # --------------------------------------------------------------------------- #
@@ -33,6 +37,10 @@ THERMADDR = 0x00
 INPUTREG = 4
 HOLDINGREG = 3
 
+# initial_message = ThermostatGuiMessage(0, 50, 0)
+# thermostat_gui = ThermostatGui(initial_message)
+# thermostat_gui.start()
+
 def updating_writer(a):
     """ A worker process to update the registers holding the temperature and humidity readings
 
@@ -40,14 +48,15 @@ def updating_writer(a):
     """
     log.debug("updating the context")
     context = a[0]
-    temp = context[UNIT].getValues(INPUTREG, TEMPADDR)[0] + 1
-    hum = context[UNIT].getValues(INPUTREG, HUMADDR)[0] + 2
+    therm = context[UNIT].getValues(HOLDINGREG, THERMADDR)[0]
+    temp = context[UNIT].getValues(INPUTREG, TEMPADDR)[0]
+    temp = (therm - temp)/2 + temp + randint(-2, 2)
+    hum = 50 + randint(-6, 6)
     log.debug("Set Temperature to: " + str(temp) + " and Humidity to " + str(hum))
     context[UNIT].setValues(INPUTREG, TEMPADDR, [temp])
     context[UNIT].setValues(INPUTREG, HUMADDR, [hum])
-
-    therm = context[UNIT].getValues(HOLDINGREG, THERMADDR)[0]
-    log.debug("Thermostat value is: " + str(therm))
+    
+    #thermostat_gui.update(ThermostatGuiMessage(temp, hum, therm))
 
 def run_thermostat_server():
     # ----------------------------------------------------------------------- # 
@@ -78,8 +87,7 @@ def run_thermostat_server():
     time = 5  # 5 seconds delay
     loop = LoopingCall(f=updating_writer, a=(context,))
     loop.start(time, now=False) # initially delay by time
-    StartSerialServer(context, identity=identity, framer=ModbusRtuFramer, port='COM3', timeout=1, baudrate=9600)
-
+    StartSerialServer(context, identity=identity, framer=ModbusRtuFramer, port='COM3', timeout=1, baudrate=115200)
 
 if __name__ == "__main__":
     run_thermostat_server()
