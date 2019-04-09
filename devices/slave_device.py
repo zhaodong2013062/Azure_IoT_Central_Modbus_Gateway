@@ -76,7 +76,7 @@ class SlaveDevice(Device):
         try:
             for key in json_data.keys():
                 if key in self.active_registers:
-                    value = json_data[key]
+                    value = json_data[key][config.VALUE_KEY]
                     self.write_register(key, value)
             return ProcessDesiredTwinResponse()
         except InvalidRegisterTypeException as e:
