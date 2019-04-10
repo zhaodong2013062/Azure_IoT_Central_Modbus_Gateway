@@ -58,7 +58,8 @@ class MasterDevice(Device):
                 config_json[config.CONFIG_KEY_ACTIVE_REGISTERS],
                 self.modbus_client,
                 self.logger,
-                model_id=config_json[config.CONFIG_KEY_MODEL_ID])
+                model_id=config_json[config.CONFIG_KEY_MODEL_ID],
+                update_interval=slave[config.CONFIG_KEY_UPDATE_INTERVAL])
             new_slaves.append(slave)
 
         self.kill_slaves()

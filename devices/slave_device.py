@@ -20,13 +20,15 @@ class SlaveDevice(Device):
     active_registers = None
     read_registers = None
     slave_id = None
+    update_interval = None
 
     _last_telemetry_sent = None
 
-    def __init__(self, scope_id, app_key, device_id, device_name, slave_id, active_registers, modbus_client, logger, model_id=''):
+    def __init__(self, scope_id, app_key, device_id, device_name, slave_id, active_registers, modbus_client, logger, model_id='', update_interval=1):
         super(SlaveDevice, self).__init__(scope_id, app_key, device_id, device_name, logger, model_id)
         
         self.slave_id = slave_id
+        self.update_interval = update_interval
         self.active_registers = {}
         self.read_registers = []
         self.modbus_client = modbus_client
@@ -98,7 +100,7 @@ class SlaveDevice(Device):
     def _loop(self):
         _last_telemetry_sent = time.time()
         while self._active:
-            if int(time.time()) - _last_telemetry_sent >= 1:
+            if int(time.time()) - _last_telemetry_sent >= self.update_interval:
                 self.report_all_registers()
                 _last_telemetry_sent = time.time()
             self.client.loop()

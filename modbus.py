@@ -9,9 +9,6 @@ from retrying import retry
 
 import config
 
-MODBUS_RETRY_WAIT = 50
-MODBUS_RETRY_ATTEMPTS = 3
-
 def _retry_if_modbus_exception(exception):
     return isinstance(exception, ModbusException)
 
@@ -39,7 +36,7 @@ class ModbusDeviceClient:
             baudrate=baudrate)
         self.client.connect()
 
-    @retry(wait_fixed=MODBUS_RETRY_WAIT, retry_on_exception=_retry_if_modbus_exception, stop_max_attempt_number=MODBUS_RETRY_ATTEMPTS)
+    @retry(wait_fixed=config.MODBUS_RETRY_WAIT, retry_on_exception=_retry_if_modbus_exception, stop_max_attempt_number=config.MODBUS_RETRY_ATTEMPTS)
     def read_register(self, register_type, slave_id, address):
         """ Read a register of specified type, slave id, address
         """
@@ -62,7 +59,7 @@ class ModbusDeviceClient:
         else:
             return result.registers[0]
 
-    @retry(wait_fixed=MODBUS_RETRY_WAIT, retry_on_exception=_retry_if_modbus_exception, stop_max_attempt_number=MODBUS_RETRY_ATTEMPTS)
+    @retry(wait_fixed=config.MODBUS_RETRY_WAIT, retry_on_exception=_retry_if_modbus_exception, stop_max_attempt_number=config.MODBUS_RETRY_ATTEMPTS)
     def write_register(self, register_type, slave_id, address, value):
         """ Write a value to a register of specified type, slave id, address
         """

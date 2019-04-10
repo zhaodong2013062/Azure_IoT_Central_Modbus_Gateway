@@ -32,15 +32,24 @@ PATH_TO_ROOT_CERT = 'baltimore.cer'
 # validate the cert returned from Azure service
 VALIDATE_CERT =  True
 
+"""
+Modbus parameters
+"""
 # Modbus baud rate
 BAUD_RATE = 9600
-
 # Modbus timeout in ms
 MODBUS_CLIENT_TIMEOUT = 1
-
 # Modbus serial port for Master
 SERIAL_PORT = '/dev/ttyAP1'
+# ms to wait on modbus retries
+MODBUS_RETRY_WAIT = 20
+# Max number of retry attempts
+MODBUS_RETRY_ATTEMPTS = 3
 
+
+"""
+JSON Keys
+"""
 # Payload key 
 DESIRED_TWIN_KEY = 'desired'
 VERSION_KEY = '$version'
@@ -54,6 +63,7 @@ CONFIG_KEY_APP_KEY = 'appKey'
 CONFIG_KEY_DEVICE_ID = 'deviceId'
 CONFIG_KEY_DEVICE_NAME = 'deviceName'
 CONFIG_KEY_MODEL_ID = 'modelId'
+CONFIG_KEY_UPDATE_INTERVAL = 'updateInterval'
 CONFIG_KEY_SLAVE_ID = 'slaveId'
 CONFIG_KEY_ACTIVE_REGISTERS = 'activeRegisters'
 
@@ -77,6 +87,7 @@ Config file structure:
         value:
         {
             modelId: ?????, 
+            updateInterval: 1,
             activeRegisters:
             [
                     {
