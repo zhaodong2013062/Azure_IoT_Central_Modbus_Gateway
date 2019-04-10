@@ -2,12 +2,14 @@
 # Copyright (c) Microsoft. All rights reserved.
 # Licensed under the MIT license.
 
+from random import randint
+
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient
 from pymodbus.exceptions import ModbusException
-from random import randint
 from retrying import retry
 
 import config
+
 
 def _retry_if_modbus_exception(exception):
     return isinstance(exception, ModbusException)
@@ -73,4 +75,3 @@ class ModbusDeviceClient:
             self.client.write_register(address, value, unit=slave_id)
         else:
             raise InvalidRegisterTypeException('Invalid register type {}.', register_type)
-

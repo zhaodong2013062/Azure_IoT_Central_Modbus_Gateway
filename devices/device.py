@@ -1,22 +1,23 @@
 # Copyright (c) Microsoft. All rights reserved.
 # Licensed under the MIT license.
 
-from abc import ABCMeta, abstractmethod
-import paho.mqtt.client as mqtt
-from time import sleep
-import ssl
-import json
 import base64
-import hmac
-import time
 import binascii
 import hashlib
+import hmac
+import json
+import ssl
 import threading
+import time
+from abc import ABCMeta, abstractmethod
 from collections import namedtuple
+from time import sleep
 
-from modbus import ModbusDeviceClient
+import paho.mqtt.client as mqtt
+
 import azure_iot_dps as dps
 import config
+from modbus import ModbusDeviceClient
 
 ProcessDesiredTwinResponse = namedtuple('ProcessDesiredTwinResponse', 'status_code status_text')
 ProcessDesiredTwinResponse.__new__.__defaults__ = (200, 'completed')

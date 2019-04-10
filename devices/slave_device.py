@@ -2,13 +2,15 @@
 # Licensed under the MIT license.
 
 import json
-import time
 import threading
+import time
+
 from pymodbus.exceptions import ModbusException
 
-from modbus import InvalidRegisterTypeException
-from device import Device, ProcessDesiredTwinResponse
 import config
+from device import Device, ProcessDesiredTwinResponse
+from modbus import InvalidRegisterTypeException
+
 
 class ActiveRegister:
     def __init__(self, address, type):
@@ -28,7 +30,7 @@ class SlaveDevice(Device):
         super(SlaveDevice, self).__init__(scope_id, app_key, device_id, model_id, device_name, logger)
         
         self.slave_id = slave_id
-        self.update_interval = 1 if update_interval == None else update_interval
+        self.update_interval = 30 if update_interval == None else update_interval
         self.active_registers = {}
         self.read_registers = []
         self.modbus_client = modbus_client

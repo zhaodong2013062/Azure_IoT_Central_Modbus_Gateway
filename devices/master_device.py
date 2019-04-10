@@ -4,10 +4,11 @@
 import json
 import time
 
-from device import Device, ProcessDesiredTwinResponse
-from slave_device import SlaveDevice
-from modbus import ModbusDeviceClient, FakeModbusDeviceClient
 import config
+from device import Device, ProcessDesiredTwinResponse
+from modbus import FakeModbusDeviceClient, ModbusDeviceClient
+from slave_device import SlaveDevice
+
 
 class MasterDevice(Device):
 
