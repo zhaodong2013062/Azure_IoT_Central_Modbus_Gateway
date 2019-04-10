@@ -98,7 +98,7 @@ class SlaveDevice(Device):
     def _loop(self):
         _last_telemetry_sent = time.time()
         while self._active:
-            if int(time.time()) - _last_telemetry_sent >= 5:
+            if int(time.time()) - _last_telemetry_sent >= 1:
                 self.report_all_registers()
                 _last_telemetry_sent = time.time()
             self.client.loop()
