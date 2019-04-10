@@ -56,9 +56,9 @@ class MasterDevice(Device):
                 slave[config.CONFIG_KEY_DEVICE_NAME],
                 slave[config.CONFIG_KEY_SLAVE_ID],
                 config_json[config.CONFIG_KEY_ACTIVE_REGISTERS],
+                config_json[config.CONFIG_KEY_MODEL_ID],
                 self.modbus_client,
                 self.logger,
-                model_id=config_json[config.CONFIG_KEY_MODEL_ID],
                 update_interval=slave[config.CONFIG_KEY_UPDATE_INTERVAL])
             new_slaves.append(slave)
 

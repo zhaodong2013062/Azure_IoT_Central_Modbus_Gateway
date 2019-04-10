@@ -15,6 +15,7 @@ def _retry_if_modbus_exception(exception):
 class InvalidRegisterTypeException(Exception):
     pass
 
+# Class used to simulate modbus devices
 class FakeModbusDeviceClient:
     def __init__(self, method, port, timeout, baudrate):
         pass
