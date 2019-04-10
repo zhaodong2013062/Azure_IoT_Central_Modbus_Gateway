@@ -13,8 +13,8 @@ class MasterDevice(Device):
 
     slaves = []
 
-    def __init__(self, scope_id, app_key, device_id, device_name, logger, model_id=''):
-        super(MasterDevice, self).__init__(scope_id, app_key, device_id, device_name, logger, model_id)
+    def __init__(self, scope_id, app_key, model_id, device_id, device_name, logger):
+        super(MasterDevice, self).__init__(scope_id, app_key, device_id, model_id, device_name, logger)
         self.modbus_client = ModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
             timeout=config.MODBUS_CLIENT_TIMEOUT, baudrate=config.BAUD_RATE)
 
@@ -35,10 +35,11 @@ class MasterDevice(Device):
                 self._init_slaves(config_json)
                 return ProcessDesiredTwinResponse()
             except (ValueError, KeyError) as e:
-                self.logger.error(e.message)
-                return ProcessDesiredTwinResponse(400, e.message)
+                status_text = 'ValueError or KeyError has occured on value/key: {}'.format(e)
+                self.logger.error(status_text)
+                return ProcessDesiredTwinResponse(400, status_text)
             except Exception as e:
-                status_text = "Error has occured in processing config file: {}.".format(e)
+                status_text = 'Error has occured in processing config file: {}.'.format(e)
                 self.logger.error(status_text)
                 return ProcessDesiredTwinResponse(500, status_text)
 
@@ -51,15 +52,15 @@ class MasterDevice(Device):
             self.logger.info('Initializing slave %s', slave[config.CONFIG_KEY_DEVICE_NAME])
             slave = SlaveDevice(
                 self.scope_id,
-                self.app_key, 
+                self.app_key,
+                config_json.get(config.CONFIG_KEY_MODEL_ID, ''),
                 slave[config.CONFIG_KEY_DEVICE_ID],
                 slave[config.CONFIG_KEY_DEVICE_NAME],
                 slave[config.CONFIG_KEY_SLAVE_ID],
                 config_json[config.CONFIG_KEY_ACTIVE_REGISTERS],
-                config_json[config.CONFIG_KEY_MODEL_ID],
+                config_json.get(config.CONFIG_KEY_UPDATE_INTERVAL),
                 self.modbus_client,
-                self.logger,
-                update_interval=slave[config.CONFIG_KEY_UPDATE_INTERVAL])
+                self.logger)
             new_slaves.append(slave)
 
         self.kill_slaves()

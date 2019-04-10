@@ -47,7 +47,7 @@ class Device(object):
     _active = False
 
     # TODO: Refresh SAS token
-    def __init__(self, scope_id, app_key, device_id, device_name, logger, model_id=''):
+    def __init__(self, scope_id, app_key, model_id, device_id, device_name, logger):
         self.scope_id = scope_id
         self.app_key = app_key
         self.device_id = device_id
