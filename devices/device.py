@@ -12,6 +12,7 @@ import time
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 from time import sleep
+from twisted.internet.task import LoopingCall
 
 import paho.mqtt.client as mqtt
 
@@ -46,6 +47,7 @@ class Device(object):
     reported_rid = 10
 
     _active = False
+    _last_updated_sas_token = None
 
     # TODO: Refresh SAS token
     def __init__(self, scope_id, app_key, model_id, device_id, device_name, logger):
@@ -85,6 +87,7 @@ class Device(object):
 
         # initial _connect to Azure IoT Hub
         self._connect()
+        self._last_updated_sas_token = int(time.time())
 
         # initialize twin support
         self.client.subscribe('$iothub/twin/res/#')
@@ -101,6 +104,10 @@ class Device(object):
         # Cloud to Device message subscribe
         self.client.subscribe('devices/{}/messages/devicebound/#'.format(config.DEVICE_NAME))
         self.client.message_callback_add('devices/{}/messages/devicebound/#'.format(config.DEVICE_NAME), self._c2d_callback)
+
+        # Start SAS token refresh job
+        loop = LoopingCall(f=self._refresh_sas_token)
+        loop.start(config.SAS_TOKEN_CHECK_INTERVAL)
 
     def start(self):
         """ Starts the loop thread
@@ -136,14 +143,26 @@ class Device(object):
     def send_telemetry(self, device_id, payload):
         """ Send a telemetry to IoT Central
         """
-        self.client.publish('devices/{}/messages/events/'.format(device_id), payload, qos=Device.qos_policy, retain=False)
-        self.logger.info('device %s with id %s sent a message: %s', self.device_name, self.device_id, payload)
+        self.logger.info('device %s sending message: %s', self.device_name, payload)
+        response = self.client.publish('devices/{}/messages/events/'.format(device_id), payload, qos=Device.qos_policy, retain=False)
+        self.logger.info('device %s received response: %s', self.device_name, response)
 
     def send_reported_property(self, payload):
         """ Send a reported property to IoT Central
         """
         self.client.publish('$iothub/twin/PATCH/properties/reported/?$rid={}'.format(Device.reported_rid), payload, qos=Device.qos_policy, retain=Device.retain_policy)
         self.logger.info('sent a reported property: %s', payload)
+
+    def _refresh_sas_token(self):
+        """ Refreshes the SAS token before it expires 
+        """
+        if self._last_updated_sas_token + config.SAS_TOKEN_TTL - int(time.time()) < 300: # 5 minutes:
+            self.logger.info('Refreshing SAS token for device %s', self.device_name)
+            active = self.device_thread != None and self._active
+            self.stop()
+            self._connect()
+            if active:
+                self.start()
 
     #region Callback Handlers
     def _on_connect(self, client, userdata, flags, rc):

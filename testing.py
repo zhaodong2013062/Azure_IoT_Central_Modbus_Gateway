@@ -12,7 +12,7 @@ logger = logging.getLogger()
 logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.INFO)
 
-master = MasterDevice("0ne0004E04A", "9Vd33uKdJLyf2IDk1AW6ckBD5alM9osQeJ8+k2F4AqmzJGITmM3pDy57sfFYuzMTlWQVefBjXiFiTwuS8D3XXA==", config.DEVICE_NAME, "mastertest", logger, '')
+master = MasterDevice("0ne0004E04A", "9Vd33uKdJLyf2IDk1AW6ckBD5alM9osQeJ8+k2F4AqmzJGITmM3pDy57sfFYuzMTlWQVefBjXiFiTwuS8D3XXA==", '', config.DEVICE_NAME, "mastertest", logger)
 
 last_telemetry_sent = time.time()
 

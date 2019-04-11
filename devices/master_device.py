@@ -15,8 +15,8 @@ class MasterDevice(Device):
     slaves = []
 
     def __init__(self, scope_id, app_key, model_id, device_id, device_name, logger):
-        super(MasterDevice, self).__init__(scope_id, app_key, device_id, model_id, device_name, logger)
-        self.modbus_client = ModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
+        super(MasterDevice, self).__init__(scope_id, app_key, model_id, device_id, device_name, logger)
+        self.modbus_client = FakeModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
             timeout=config.MODBUS_CLIENT_TIMEOUT, baudrate=config.BAUD_RATE)
 
     def kill_slaves(self):

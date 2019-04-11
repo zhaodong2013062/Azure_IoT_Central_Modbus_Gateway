@@ -30,7 +30,7 @@ def loopAssign(operationId, headers, deviceId, scopeId, deviceKey, callback):
   method = 'GET'
 
   h = http.Http()
-  response, content = h.request(
+  _, content = h.request(
           target.geturl(),
           method,
           "",
@@ -83,7 +83,7 @@ def getConnectionString(deviceId, mkey, scopeId, isMasterKey, callback, modelId=
   method = 'PUT'
 
   h = http.Http()
-  response, content = h.request(
+  _, content = h.request(
           target.geturl(),
           method,
           body,

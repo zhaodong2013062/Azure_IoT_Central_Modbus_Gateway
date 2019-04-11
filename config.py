@@ -32,6 +32,9 @@ PATH_TO_ROOT_CERT = 'baltimore.cer'
 # validate the cert returned from Azure service
 VALIDATE_CERT =  True
 
+# Inverval to check if SAS token is about to expire in seconds
+SAS_TOKEN_CHECK_INTERVAL = 60
+
 """
 Modbus parameters
 """

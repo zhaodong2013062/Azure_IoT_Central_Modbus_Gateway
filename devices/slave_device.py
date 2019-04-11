@@ -27,7 +27,7 @@ class SlaveDevice(Device):
     _last_telemetry_sent = None
 
     def __init__(self, scope_id, app_key, model_id, device_id, device_name, slave_id, active_registers, update_interval, modbus_client, logger):
-        super(SlaveDevice, self).__init__(scope_id, app_key, device_id, model_id, device_name, logger)
+        super(SlaveDevice, self).__init__(scope_id, app_key, model_id, device_id, device_name, logger)
         
         self.slave_id = slave_id
         self.update_interval = 30 if update_interval == None else update_interval
