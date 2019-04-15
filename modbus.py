@@ -29,7 +29,7 @@ class FakeModbusDeviceClient:
             return randint(0, 100)
 
     def write_register(self, register_type, slave_id, address, value):
-        print 'writing {} to slave {} address {}'.format(value, slave_id, address)
+        print 'fake writing {} to slave {} address {}'.format(value, slave_id, address)
 
 class ModbusDeviceClient:
     """ Class to get/set sensor/actuator values to/from slaves of the Modbus gateway

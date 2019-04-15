@@ -21,7 +21,7 @@ MODEL_ID = '130772c7-97dd-4a76-bbdb-9209888293f6'
 
 # device identity, this can be pre registered in the IoT Central application or will be registered via DPS and 
 # placed in the Unassociated Devices page waiting to be associated with a template
-DEVICE_NAME = 'f0323747-8e27-46d4-bb7a-c92d059c480b'
+DEVICE_ID = 'f0323747-8e27-46d4-bb7a-c92d059c480b'
 
 # how long should the SAS Token be valid for in seconds, code should be added to renew the token before expiration
 SAS_TOKEN_TTL = 3600 # one hour
@@ -53,18 +53,22 @@ MODBUS_RETRY_ATTEMPTS = 3
 """
 JSON Keys
 """
-# Payload key 
-DESIRED_TWIN_KEY = 'desired'
-VERSION_KEY = '$version'
-VALUE_KEY = "value"
-CONFIG_KEY = 'slavesconfig'
+# Model Data keys
+KEY_MODEL_ID = 'iotcModelId'
+KEY_GATEWAY = 'iotcGateway'
+KEY_GATEWAY_ID = 'iotcGatewayId'
+KEY_IS_GATEWAY = 'iotcIsGateway'
+
+# Payload key s
+KEY_VERSION = '$version'
+KEY_VERSION = 'value'
+KEY_CONFIG = 'slavesconfig'
 
 # Slave config keys
 CONFIG_KEY_SLAVES = "slaves"
 CONFIG_KEY_SCOPE_ID = 'scopeId'
 CONFIG_KEY_APP_KEY = 'appKey'
 CONFIG_KEY_DEVICE_ID = 'deviceId'
-CONFIG_KEY_DEVICE_NAME = 'deviceName'
 CONFIG_KEY_MODEL_ID = 'modelId'
 CONFIG_KEY_UPDATE_INTERVAL = 'updateInterval'
 CONFIG_KEY_SLAVE_ID = 'slaveId'
