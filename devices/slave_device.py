@@ -4,6 +4,7 @@
 import json
 import time
 from collections import namedtuple
+
 from pymodbus.exceptions import ModbusException
 
 import config

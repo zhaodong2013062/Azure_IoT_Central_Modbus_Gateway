@@ -2,15 +2,18 @@
 # Licensed under the MIT license.
 
 import base64
+import hashlib
+import hmac
 import json
 import threading
 import time
-import iotc
-import hmac
-import hashlib
-from iotc import IOTConnectType, IOTLogLevel
+from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 from time import sleep
+
+import iotc
+from iotc import IOTConnectType, IOTLogLevel
+
 import config
 from modbus import ModbusDeviceClient
 
@@ -71,22 +74,10 @@ class Device(object):
         self.client.disconnect()
         self.logger.info('Stopped loop for device %s', self.device_id)
 
-    def refresh_sas_token(self):
-        """ Refreshes the SAS token before it expires 
-        """
-        if self._last_updated_sas_token + config.SAS_TOKEN_TTL - int(time.time()) < 300: # 5 minutes:
-            self.logger.info('Refreshing SAS token for device %s', self.device_id)
-            active = self.device_thread != None and self._active
-            self.stop()
-            self.client.connect()
-            if active:
-                self.start()
-            self._last_updated_sas_token = time.time()
-
     #region Callback Handlers
     def _on_connect(self, info):
         if not info.getStatusCode():
-            self.log_info('Connected/Disconnected %s successfully', self.device_id)
+            self.logger.info('Connected/Disconnected %s successfully', self.device_id)
         else:
             self.logger.error('Failed to connect %s with error %s: %s', self.device_id, info.getStatusCode(),
                 info.getPayload())
