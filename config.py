@@ -4,11 +4,12 @@
 Modbus parameters
 """
 # Modbus baud rate
-BAUD_RATE = 9600
+BAUD_RATE = 4800
 # Modbus timeout in ms
 MODBUS_CLIENT_TIMEOUT = 1
 # Modbus serial port for Master
 SERIAL_PORT = '/dev/ttyAP1'
+#SERIAL_PORT = 'COM5'
 # ms to wait on modbus retries
 MODBUS_RETRY_WAIT = 20
 # Max number of retry attempts

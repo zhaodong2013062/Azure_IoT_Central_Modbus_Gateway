@@ -1,0 +1,29 @@
+{ 
+"modelId":  "29xseo/1.0.0",  
+"updateInterval": 5,
+"activeRegisters": 
+[ 
+{ 
+"registerName": "xangle", 
+"address": 61, 
+"type": "hr" 
+}, 
+{ 
+"registerName": "yangle", 
+"address": 62, 
+"type": "hr" 
+}, 
+{ 
+"registerName": "zangle",  
+"address": 63, 
+"type": "hr" 
+} 
+],  
+"slaves":  
+[ 
+{   
+"deviceId": "attitudesensor", 
+"slaveId": "80"
+}
+] 
+}

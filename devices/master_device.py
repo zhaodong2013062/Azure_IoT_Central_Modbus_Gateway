@@ -6,7 +6,7 @@ import time
 
 import config
 from device import Device, ProcessDesiredTwinResponse
-from modbus import FakeModbusDeviceClient, ModbusDeviceClient
+from modbus import SimulatedModbusDeviceClient, SerialModbusDeviceClient, TCPModbusDeviceClient
 from slave_device import SlaveDevice
 
 
@@ -17,10 +17,12 @@ class MasterDevice(Device):
     def __init__(self, scope_id, app_key, model_id, device_id, logger):
         model_data = Device._create_model_data(model_id, None, True)
         super(MasterDevice, self).__init__(scope_id, app_key, device_id, model_data, logger)
-        self.modbus_client = FakeModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
+        self.modbus_client = SerialModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
             timeout=config.MODBUS_CLIENT_TIMEOUT, baudrate=config.BAUD_RATE)
 
     def kill_slaves(self):
+        """ Disconnect and stop threads for all slave devices
+        """
         self.logger.info('Killing slaves of %s: %s', self.device_id, [s.device_id for s in self.slaves])
         for slave in self.slaves:
             slave.stop()
