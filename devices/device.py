@@ -149,7 +149,7 @@ class Device(object):
 
     @staticmethod
     def _create_model_data(model_id, gateway_id, is_gateway):
-        """ Creates the model data payload for provisioning the master or slave device
+        """ Creates the model data payload (in string format) for provisioning the master or slave device
         """
         if is_gateway:
             assert(gateway_id == None)
@@ -160,7 +160,7 @@ class Device(object):
             config.KEY_MODEL_ID: model_id, 
             config.KEY_GATEWAY: {
                 config.KEY_GATEWAY_ID: gateway_id,
-                config.KEY_IS_GATEWAY: is_gateway
+                config.KEY_IS_GATEWAY: 'true' if is_gateway else 'false'
             }
         }
-        return model_data
+        return str(model_data)
