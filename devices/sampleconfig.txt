@@ -27,3 +27,41 @@
 }
 ] 
 }
+
+{ 
+"modelId":  "18144sf/1.0.0",  
+"updateInterval": 5,
+"activeRegisters": 
+[ 
+{ 
+"registerName": "temp", 
+"address": 0, 
+"type": "ir" 
+}, 
+{ 
+"registerName": "humidity", 
+"address": 1, 
+"type": "ir" 
+}, 
+{ 
+"registerName": "thermostat",  
+"address": 0, 
+"type": "hr" 
+} 
+],  
+"slaves":  
+[ 
+{   
+"deviceId": "thermostat1", 
+"slaveId": "0"
+},
+{   
+"deviceId": "thermostat2", 
+"slaveId": "0"
+},
+{   
+"deviceId": "thermostat3", 
+"slaveId": "0"
+}
+] 
+}

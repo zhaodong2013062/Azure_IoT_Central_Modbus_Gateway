@@ -160,7 +160,7 @@ class Device(object):
             config.KEY_MODEL_ID: model_id, 
             config.KEY_GATEWAY: {
                 config.KEY_GATEWAY_ID: gateway_id,
-                config.KEY_IS_GATEWAY: 'true' if is_gateway else 'false'
+                config.KEY_IS_GATEWAY: is_gateway
             }
         }
-        return str(model_data)
+        return model_data
