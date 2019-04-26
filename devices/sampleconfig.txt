@@ -17,7 +17,12 @@
 "registerName": "zangle",  
 "address": 63, 
 "type": "hr" 
-} 
+},
+{
+"registerName": "baudrate",
+"address": 4 ,
+"type":"hr"
+}
 ],  
 "slaves":  
 [ 
