@@ -1,6 +1,6 @@
 { 
 "modelId":  "29xseo/1.0.0",  
-"updateInterval": 5,
+"updateInterval": 1,
 "activeRegisters": 
 [ 
 { 
@@ -28,9 +28,18 @@
 ] 
 }
 
+
+
+
+
+
+
+
+
+
 { 
 "modelId":  "18144sf/1.0.0",  
-"updateInterval": 5,
+"updateInterval": 1,
 "activeRegisters": 
 [ 
 { 
