@@ -35,13 +35,6 @@
 
 
 
-
-
-
-
-
-
-
 { 
 "modelId":  "18144sf/1.0.0",  
 "updateInterval": 1,
