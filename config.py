@@ -1,8 +1,32 @@
+import logging
+
 # These are the values to configure the behavior of the modbus gateway
+
+# Logging format
+LOGGING_FORMAT = '%(asctime)s:[%(module)s.%(funcName)s()]: %(message)s'
+# Logging Level 
+GLOBAL_LOG_LEVEL = logging.INFO
+
+"""
+IoT Central parameters
+"""
+# IoT Central App Scope ID
+CENTRAL_SCOPE_ID = '0ne0004E04A'
+# IoT Central App Key
+CENTRAL_APP_KEY = '9Vd33uKdJLyf2IDk1AW6ckBD5alM9osQeJ8+k2F4AqmzJGITmM3pDy57sfFYuzMTlWQVefBjXiFiTwuS8D3XXA=='
+# Master Device ModelId
+MASTER_MODEL_ID = 'd3grte/1.1.0'
+# Master DeviceId
+MASTER_DEVICE_ID = 'modbusmastertests'
 
 """
 Modbus parameters
 """
+# Modbus mode: 
+#   0: Simulated
+#   1: Serial
+#   2: TCP/IP
+MODBUS_MODE = 0
 # Modbus baud rate
 BAUD_RATE = 4800
 # Modbus timeout in ms

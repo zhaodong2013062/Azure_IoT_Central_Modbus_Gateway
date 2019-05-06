@@ -27,7 +27,7 @@
 "slaves":  
 [ 
 {   
-"deviceId": "attitudesensor", 
+"deviceId": "attitudesensortest", 
 "slaveId": "80"
 }
 ] 

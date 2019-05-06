@@ -17,8 +17,17 @@ class MasterDevice(Device):
     def __init__(self, scope_id, app_key, model_id, device_id, logger):
         model_data = Device._create_model_data(model_id, None, True)
         super(MasterDevice, self).__init__(scope_id, app_key, device_id, model_data, logger)
-        self.modbus_client = SerialModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
+        
+        if config.MODBUS_MODE == 0:
+            self.modbus_client = SimulatedModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
             timeout=config.MODBUS_CLIENT_TIMEOUT, baudrate=config.BAUD_RATE)
+        elif config.MODBUS_MODE == 1:
+            self.modbus_client = SerialModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
+                timeout=config.MODBUS_CLIENT_TIMEOUT, baudrate=config.BAUD_RATE)
+        elif config.MODBUS_MODE == 2:
+            self.modbus_client = TCPModbusDeviceClient()
+        else:
+            raise 'Invalid Modbus Mode configuration'
 
     def kill_slaves(self):
         """ Disconnect and stop threads for all slave devices
