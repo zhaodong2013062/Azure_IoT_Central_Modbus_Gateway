@@ -11,13 +11,13 @@ GLOBAL_LOG_LEVEL = logging.INFO
 IoT Central parameters
 """
 # IoT Central App Scope ID
-CENTRAL_SCOPE_ID = '0ne0005880D'
+CENTRAL_SCOPE_ID = '<SCOPEID>'
 # IoT Central App Key
-CENTRAL_APP_KEY = '3PkRX/3NhI3LmBx/DmL6chA6TXzp3T5PdRJat6V/9cP/Mg6Akg5mMPiUkqkcT8GAyQ+N/biE8kvbiuxP4kQrwQ=='
+CENTRAL_APP_KEY = '<APPKEY>'
 # Master Device ModelId
-MASTER_MODEL_ID = '136aeyk/1.0.0'
+MASTER_MODEL_ID = '<MODELID>'
 # Master DeviceId
-MASTER_DEVICE_ID = 'modbusmastertest'
+MASTER_DEVICE_ID = 'modbusmastertests'
 
 """
 Modbus parameters
@@ -32,7 +32,7 @@ BAUD_RATE = 4800
 # Modbus timeout in ms
 MODBUS_CLIENT_TIMEOUT = 1
 # Modbus serial port for Master
-SERIAL_PORT = '<PLACEHOLDER_SERIAL_PORT>'
+SERIAL_PORT = '<SERIALPORT>'
 # Modbus communication method
 MODBUS_METHOD = 'rtu'
 # ms to wait on modbus retries

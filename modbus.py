@@ -122,7 +122,6 @@ class SerialModbusDeviceClient(ModbusDeviceClient):
         self.client = ModbusSerialClient(method=method, port=port, timeout=timeout, 
             baudrate=baudrate)
         self.client.connect()
-        #os.system('sudo set-rs485 /dev/ttyAP1 1')
 
     def read_register(self, register_type, slave_id, address):
         return ModbusDeviceClient._read_register(self.client, register_type, int(slave_id), int(address))
