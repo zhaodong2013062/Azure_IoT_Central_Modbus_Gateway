@@ -22,7 +22,7 @@ class MasterDevice(Device):
             self.modbus_client = SimulatedModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
             timeout=config.MODBUS_CLIENT_TIMEOUT, baudrate=config.BAUD_RATE)
         elif config.MODBUS_MODE == 1:
-            self.modbus_client = SerialModbusDeviceClient(method='rtu', port=config.SERIAL_PORT, 
+            self.modbus_client = SerialModbusDeviceClient(method=config.MODBUS_METHOD, port=config.SERIAL_PORT, 
                 timeout=config.MODBUS_CLIENT_TIMEOUT, baudrate=config.BAUD_RATE)
         elif config.MODBUS_MODE == 2:
             self.modbus_client = TCPModbusDeviceClient()

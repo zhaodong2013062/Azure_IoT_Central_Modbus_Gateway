@@ -1,42 +1,5 @@
 { 
-"modelId":  "29xseo/1.0.0",  
-"updateInterval": 1,
-"activeRegisters": 
-[ 
-{ 
-"registerName": "xangle", 
-"address": 61, 
-"type": "hr" 
-}, 
-{ 
-"registerName": "yangle", 
-"address": 62, 
-"type": "hr" 
-}, 
-{ 
-"registerName": "zangle",  
-"address": 63, 
-"type": "hr" 
-},
-{
-"registerName": "baudrate",
-"address": 4 ,
-"type":"hr"
-}
-],  
-"slaves":  
-[ 
-{   
-"deviceId": "attitudesensortest", 
-"slaveId": "80"
-}
-] 
-}
-
-
-
-{ 
-"modelId":  "18144sf/1.0.0",  
+"modelId":  "130772c7-97dd-4a76-bbdb-9209888293f6/1.0.0",  
 "updateInterval": 1,
 "activeRegisters": 
 [ 
@@ -49,25 +12,17 @@
 "registerName": "humidity", 
 "address": 1, 
 "type": "ir" 
-}, 
-{ 
-"registerName": "thermostat",  
+},
+{
+"registerName": "voltage", 
 "address": 0, 
 "type": "hr" 
-} 
+}
 ],  
 "slaves":  
 [ 
 {   
-"deviceId": "thermostat1", 
-"slaveId": "0"
-},
-{   
-"deviceId": "thermostat2", 
-"slaveId": "0"
-},
-{   
-"deviceId": "thermostat3", 
+"deviceId": "mxchipmodbusslave", 
 "slaveId": "0"
 }
 ] 
